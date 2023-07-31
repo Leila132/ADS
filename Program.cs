@@ -1,207 +1,127 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace DinArray
+namespace OrderedList
 {
-    class DArray
+    class Program
     {
-        int[] intArray;
-        int n;
-        
-        private int[] Reallocate(int[]a, bool r) ///true - увеличение, false - уменьшение
+        public class OrderedList
         {
-            if (r)
-            {
-                int[] newAr = new int[a.Length * 2];
-                for (int i = 0; i < a.Length; i++)
-                {
-                    newAr[i] = a[i];
-                }
-                return newAr;
-            }
-            else
-            {
-                int[] newAr = new int[a.Length / 2];
-                for (int i = 0; i < a.Length; i++)
-                {
-                    if(a[i] != 0) newAr[i] = a[i];
-                }
-                return newAr;
-            }
-        }
+            private int count = 0;
+            List<int> ListElems = new List<int>();
 
-        public string print()
-        {
-            string str = "[";
-            for (int i = 0; i < intArray.Length; i++)
+            public int getCount()
             {
-                str += intArray[i];
+                return count;
             }
-            str += "]";
-            return str;
-        }
-        public int count()
-        {
-            return n;
-        }
-        public DArray(int[] a, int b) //создаем конструктор
-        {
-            intArray = new int[a.Length*2];
-            for(int i = 0; i < a.Length; i++)
+            public string print()
             {
-                intArray[i] = a[i];
+                string print = "[";
+                for (int i = 0; i < ListElems.Count; i++)
+                { 
+                    if(i != ListElems.Count - 1) print += ListElems[i] + ", ";
+                    else print += ListElems[i]; 
+                }
+                print += "]";
+                return print;
             }
-            n = b;
-        }
-
-        public void Push_Back(int el)
-        {
-            if (n != 0)
+            public double begin()
             {
-                if (intArray[intArray.Length - 1] != 0)
+                if (count > 0) return ListElems[0];
+                else return double.NegativeInfinity;
+            }
+            public double end()
+            {
+                if (count > 0) return ListElems[ListElems.Count - 1];
+                else return double.NegativeInfinity;
+            }
+            public void insert(int el)
+            {
+                if(count == 0)
                 {
-                    intArray = Reallocate(intArray, true);
-                    intArray[intArray.Length / 2] = el;
+                    ListElems.Add(el);
                 }
                 else
                 {
-                    intArray[n] = el;
+                    List<int> ListElems2 = new List<int>();
+                    if (el < ListElems[0])
+                    {
+                        ListElems2.Add(el);
+                        for (int i = 0; i < ListElems.Count; i++)
+                        {
+                            ListElems2.Add(ListElems[i]);
+                        }
+                    }
+                    else
+                    {
+                        bool flag = true;
+                        for (int i = 0; i < ListElems.Count; i++)
+                        {
+
+                            if (ListElems[i] < el) ListElems2.Add(ListElems[i]);
+                            else
+                            {
+                                if (flag) { ListElems2.Add(el);ListElems2.Add(ListElems[i]); flag = false; }
+                                else ListElems2.Add(ListElems[i]);
+                            }
+                        }
+                        if (ListElems2.Count == ListElems.Count) ListElems2.Add(el);
+                    }
+                    ListElems = ListElems2;
                 }
+                count++;
             }
-            else
+            public void remove(int el)
             {
-                intArray = new int[1] { el };
-            }
-            n++;
-        }
-        public void Pop_Back()
-        {
-            if (n > 0)
-            {
-                intArray[n - 1] = 0;
-                if (intArray[intArray.Length / 2] == 0)
+                List<int> ListElems2 = new List<int>();
+                bool flag = true;
+                for (int i = 0; i < ListElems.Count; i++)
                 {
-                    intArray = Reallocate(intArray, false);
+                    if (ListElems[i] != el) ListElems2.Add(ListElems[i]);
+                    else
+                    {
+                        if (flag)
+                        {
+                            flag = false;
+                        }
+                        else
+                        {
+                            ListElems2.Add(ListElems[i]);
+                        }
+                    }
                 }
-                n--;
-            }
-        }
-        public void Push_Front(int el)
-        {
-            int[] newAr;
-            if (n != 0)
-            {
-                if (intArray[intArray.Length - 1] != 0)
-                {
-                    intArray = Reallocate(intArray, true);
-                }
-                newAr = new int[intArray.Length];
-                newAr[0] = el;
-                for (int i = 1; i < n + 1; i++)
-                {
-                    newAr[i] = intArray[i - 1];
-                }
-            }
-            else
-            {
-                newAr = new int[1] { el };
-            }
-            intArray = newAr;
-            n++;
-        }
-        public void Pop_Front()
-        {
-            if (n > 0)
-            {
-                int[] newAr = new int[intArray.Length];
-                for(int i = 1; i < n; i++)
-                {
-                    newAr[i-1] = intArray[i];
-                }
-                intArray = newAr;
-                if (intArray[intArray.Length / 2] == 0)
-                {
-                    intArray = Reallocate(intArray, false);
-                }
-                n--;
+                ListElems = ListElems2;
+                count--;
             }
         }
-    }
-    class Program
-    {
+
         static void Main(string[] args)
         {
-            int N = 2;
-            int[] a = new int[2] { 1, 2 };
-            DArray ar = new DArray(a, N);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Back(3);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Back(4);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Back(5);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Back(6);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Back();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Back();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Back();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Back();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Back();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Back();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Back();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            Console.WriteLine("*******************************************");
-            ar.Push_Back(4);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Front(5);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Front(6);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Front(7);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Push_Front(8);
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Front();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Front();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Front();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Front();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Front();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
-            ar.Pop_Front();
-            Console.WriteLine(ar.print());
-            Console.WriteLine(ar.count());
+            OrderedList a = new OrderedList();
+            a.insert(3);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
+            a.insert(4);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
+            a.insert(5);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
+            a.insert(4);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
+            a.insert(3);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
+            a.insert(2);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
+            a.remove(5);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
+            a.remove(2);
+            Console.WriteLine(a.print());
+            Console.WriteLine(a.getCount());
         }
     }
 }
